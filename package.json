@@ -4,14 +4,21 @@
   "description": "A node module to generate jasper reports using JasperStarter",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/loez/node-json-jasper.git"
   },
   "keywords": [
-    "jasper", "report", "JasperReports", "reports", "JasperStarter", "pdf", "docx","xlsx"
+    "jasper",
+    "report",
+    "JasperReports",
+    "reports",
+    "JasperStarter",
+    "pdf",
+    "docx",
+    "xlsx"
   ],
   "author": "Luiz Mello",
   "license": "Apache-2.0",
@@ -20,5 +27,6 @@
   },
   "homepage": "https://github.com/loez/node-json-jasper#readme",
   "dependencies": {
+    "constants": "^0.0.2"
   }
 }

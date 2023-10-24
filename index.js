@@ -1,12 +1,13 @@
 const fs = require("fs").promises;
 const {spawn} = require("child_process");
 const path = require('path')
-const exportTypes = ["pdf", "docx", "xlsx", "pptx","rtf","html","xhtml","xml"];
-const generateReport = ({reportName,jasperReport, reportOutput, jsonPath},{exportType = "pdf",jsonQuery = "", parameters = {}, bufferReturn = false} = {}) => new Promise((success, reject) => {
-    Promise.all([checkPath(jasperReport), checkPath(reportOutput,fs.constants.F_OK | fs.constants.W_OK), checkPath(jsonPath)])
+const {F_OK} = require("constants");
+const exportTypes = ["pdf", "docx", "xlsx", "pptx", "rtf", "html", "xhtml", "xml"];
+const generateReport = (reportName, jasperReport, reportOutput, jsonPath, {exportType = "pdf", jsonQuery = "", parameters = {}, bufferReturn = false} = {}) => new Promise((success, reject) => {
+    Promise.all([validateData(reportName, exportType), checkPath(jasperReport), checkPath(reportOutput), checkPath(jsonPath)])
         .then(() => {
             let errorMessages = "";
-            const generate = spawn(path.resolve('./jasperstarter/bin/jasperstarter'), generateCommand(reportName,jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}));
+            const generate = spawn(path.resolve(__dirname, './jasperstarter/bin/jasperstarter'), generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}));
 
             generate.stderr.on('data', (dataError) => {
                 errorMessages += dataError + "\r\n";
@@ -16,60 +17,70 @@ const generateReport = ({reportName,jasperReport, reportOutput, jsonPath},{expor
                 if (code === 0) {
                     if (!bufferReturn) {
                         return success({
-                            //todo
                             reportPath: reportOutput + reportName + "." + exportType
-                        })
+                        });
                     }
-                    fs.readFile(reportOutput)
+                    fs.readFile(reportOutput + reportName + "." + exportType)
                         .then((fileBuffer) => {
-                            fs.unlink(reportOutput)
+                            fs.unlink(reportOutput + reportName + "." + exportType)
                                 .then(() => {
                                     return success(fileBuffer);
                                 }).catch(() => {
-                                return reject("Error on unlink output file");
+                                return reject(Error("Error on unlink output file"));
                             })
                         })
                 } else {
-                    return reject(errorMessages);
+                    return reject(Error(errorMessages));
                 }
             })
         })
         .catch((errorPaths) => {
-            reject(errorPaths)
+            reject(errorPaths);
         })
 });
 
-const checkPath = (pathFile,permission = fs.constants.F_OK) => new Promise((success, reject) => {
-    fs.access(pathFile, permission)
+const checkPath = (pathFile,) => new Promise((success, reject) => {
+    fs.access(pathFile, F_OK)
         .then(() => {
             return success(true);
         })
         .catch(() => {
-            return reject(pathFile);
+            return reject(Error(pathFile));
         })
 });
 
-function generateCommand(reportName,jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}){
-    let command = ["--locale","pt_BR",
+function generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}) {
+    let command = ["--locale", "pt_BR", "process",
         jasperReport,
-        "-o",(reportOutput + reportName),
-        "-f",exportType,
-        "-t","json",
-        "--data-file",jsonPath,
+        "-o", (reportOutput + reportName),
+        "-f", exportType,
+        "-t", "json",
+        "--data-file", jsonPath
     ]
 
-    if(jsonQuery){
+    if (jsonQuery) {
         command.push("--json-query");
         command.push(jsonQuery);
     }
 
-    if(Object.keys(parameters).length){
-        command.push("-P")
-        Object.keys(parameters).forEach((parameterKey)=>{
+    if (Object.keys(parameters).length) {
+        command.push("-P");
+        Object.keys(parameters).forEach((parameterKey) => {
             command.push(`${parameterKey}=${parameters[parameterKey]}`);
         })
     }
     return command;
 }
+
+const validateData = (reportName, exportType) => new Promise((success, reject) => {
+    if (!reportName) {
+        return reject(Error("Report name is necessary."));
+    }
+
+    if (!exportTypes.includes(exportType.toLowerCase())) {
+        return reject(Error(`Export Type don't mismatch a valid option.("${exportType}")`));
+    }
+    return success(true);
+})
 
 module.exports = {generateReport}
