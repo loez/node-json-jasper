@@ -1,0 +1,24 @@
+{
+  "name": "node-json-jasper",
+  "version": "1.0.0",
+  "description": "A node module to generate jasper reports using JasperStarter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loez/node-json-jasper.git"
+  },
+  "keywords": [
+    "jasper", "report", "JasperReports", "reports", "JasperStarter", "pdf", "docx","xlsx"
+  ],
+  "author": "Luiz Mello",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/loez/node-json-jasper/issues"
+  },
+  "homepage": "https://github.com/loez/node-json-jasper#readme",
+  "dependencies": {
+  }
+}
