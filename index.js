@@ -1,7 +1,7 @@
 const fs = require("fs").promises;
 const {spawn} = require("child_process");
 const path = require('path')
-const {F_OK} = require("constants");
+const {constants} = require("fs");
 const exportTypes = ["pdf", "docx", "xlsx", "pptx", "rtf", "html", "xhtml", "xml"];
 const generateReport = (reportName, jasperReport, reportOutput, jsonPath, {exportType = "pdf", jsonQuery = "", parameters = {}, bufferReturn = false} = {}) => new Promise((success, reject) => {
     Promise.all([validateData(reportName, exportType), checkPath(jasperReport), checkPath(reportOutput), checkPath(jsonPath)])
@@ -40,7 +40,7 @@ const generateReport = (reportName, jasperReport, reportOutput, jsonPath, {expor
 });
 
 const checkPath = (pathFile,) => new Promise((success, reject) => {
-    fs.access(pathFile, F_OK)
+    fs.access(pathFile, constants.F_OK)
         .then(() => {
             return success(true);
         })

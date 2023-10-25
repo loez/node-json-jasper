@@ -27,6 +27,5 @@
   },
   "homepage": "https://github.com/loez/node-json-jasper#readme",
   "dependencies": {
-    "constants": "^0.0.2"
   }
 }
