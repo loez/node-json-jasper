@@ -4,10 +4,10 @@ const path = require('path')
 const {constants} = require("fs");
 const exportTypes = ["pdf", "docx", "xlsx", "pptx", "rtf", "html", "xhtml", "xml"];
 const generateReport = (reportName, jasperReport, reportOutput, jsonPath, {exportType = "pdf", jsonQuery = "", parameters = {}, bufferReturn = false} = {}) => new Promise((success, reject) => {
-    Promise.all([validateData(reportName, exportType), checkPath(jasperReport), checkPath(reportOutput), checkPath(jsonPath)])
+    Promise.all([validateData(reportName, exportType), checkPath(jasperReport), checkPath(reportOutput,constants.F_OK | constants.W_OK), checkPath(jsonPath)])
         .then(() => {
             let errorMessages = "";
-            const generate = spawn(path.resolve(__dirname, './jasperstarter/bin/jasperstarter'), generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}));
+            const generate = spawn(path.resolve(__dirname, './jasperstarter/bin/jasperstarter'), generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery, parameters));
 
             generate.stderr.on('data', (dataError) => {
                 errorMessages += dataError + "\r\n";
@@ -39,8 +39,8 @@ const generateReport = (reportName, jasperReport, reportOutput, jsonPath, {expor
         })
 });
 
-const checkPath = (pathFile,) => new Promise((success, reject) => {
-    fs.access(pathFile, constants.F_OK)
+const checkPath = (pathFile, permissions = constants.F_OK) => new Promise((success, reject) => {
+    fs.access(pathFile, permissions)
         .then(() => {
             return success(true);
         })
@@ -49,7 +49,7 @@ const checkPath = (pathFile,) => new Promise((success, reject) => {
         })
 });
 
-function generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery = "", parameters = {}) {
+function generateCommand(reportName, jasperReport, reportOutput, jsonPath, exportType, jsonQuery , parameters ) {
     let command = ["--locale", "pt_BR", "process",
         jasperReport,
         "-o", (reportOutput + reportName),
@@ -74,7 +74,7 @@ function generateCommand(reportName, jasperReport, reportOutput, jsonPath, expor
 
 const validateData = (reportName, exportType) => new Promise((success, reject) => {
     if (!reportName) {
-        return reject(Error("Report name is necessary."));
+        return reject(Error("Report name is necessary and can`t be a empty string."));
     }
 
     if (!exportTypes.includes(exportType.toLowerCase())) {
@@ -82,5 +82,9 @@ const validateData = (reportName, exportType) => new Promise((success, reject) =
     }
     return success(true);
 })
+
+function isLiteralObject(obj){
+    return ((!!obj) && (obj.constructor === Object ))
+}
 
 module.exports = {generateReport}
