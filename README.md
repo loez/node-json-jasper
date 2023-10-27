@@ -11,7 +11,7 @@ Java 8 installed
 ### Usage
 `npm install node-json-jasper`
 ```javascript
-    const {generateReport} = require("node-json-jasper")
+const {generateReport} = require("node-json-jasper")
 
 let report = generateReport(reportName ,jasperReport ,reportOutput, jsonPath, {exportType:"pdf",bufferRetrun:true})
 ```
@@ -22,6 +22,8 @@ let report = generateReport(reportName ,jasperReport ,reportOutput, jsonPath, {e
 | jasperReport  | (string) The full path to the .jrxml or .jasper file  |
 | reportOutput  | (string) The full path were the report will be generated  |
 | jsonPath | (string) The full path to the json file that will be used to fill the report|
+
+<br>
 
 | Optional Parameters | Information |
 |---------------------| ------------ |
@@ -35,7 +37,8 @@ let report = generateReport(reportName ,jasperReport ,reportOutput, jsonPath, {e
 
 ## Thanks
 Created based on [Lavela](https://github.com/lavela/phpjasper/ "Lavela") php solution
-Thanks [Raphael](https://github.com/raphael-heilbuth "Raphael") for always helping with this things
+<br>
+Thanks [Raphael](https://github.com/raphael-heilbuth "Raphael") for always helping with this things and review my code
 
 ------------
 
