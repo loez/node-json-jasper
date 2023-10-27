@@ -1,6 +1,6 @@
 {
   "name": "node-json-jasper",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A node module to generate jasper reports using JasperStarter",
   "main": "index.js",
   "scripts": {
